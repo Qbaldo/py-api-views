@@ -31,10 +31,12 @@ class Movie(models.Model):
     duration = models.IntegerField()
     actors = models.ManyToManyField(
         Actor,
-        related_name="movies",)
+        related_name="movies",
+    )
     genres = models.ManyToManyField(
         Genre,
-        related_name="movies",)
+        related_name="movies",
+    )
 
     def __str__(self):
         return self.title
