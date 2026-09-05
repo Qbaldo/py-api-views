@@ -74,7 +74,7 @@ class GenreDetail(APIView):
 
 class ActorList(GenericAPIView,
                 ListModelMixin,
-                CreateModelMixin):
+                ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
@@ -82,12 +82,19 @@ class ActorList(GenericAPIView,
         return self.list(request)
 
     def post(self, request):
-        return self.create(request)
+        serializer = ActorSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class ActorDetail(GenericAPIView,
                   RetrieveModelMixin,
-                  UpdateModelMixin,
                   DestroyModelMixin
                   ):
     queryset = Actor.objects.all()
@@ -97,7 +104,17 @@ class ActorDetail(GenericAPIView,
         return self.retrieve(request, pk)
 
     def put(self, request, pk):
-        return self.update(request, pk)
+        actor = get_object_or_404(Actor, pk=pk)
+        serializer = ActorSerializer(actor, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     def patch(self, request, pk):
         return self.partial_update(request, pk)
