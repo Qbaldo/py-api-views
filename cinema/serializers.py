@@ -24,8 +24,10 @@ class MovieSerializer(serializers.Serializer):
             title=validated_data["title"],
             description=validated_data["description"],
             duration=validated_data["duration"],)
-        movie.actors.set(validated_data["actors"])
-        movie.genres.set(validated_data["genres"])
+        if "actors" in validated_data:
+            movie.actors.set(validated_data["actors"])
+        if "genres" in validated_data:
+            movie.genres.set(validated_data["genres"])
         return movie
 
     def update(self, instance, validated_data):
